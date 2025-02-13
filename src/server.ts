@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { parse } from 'path';
 
 const app = express();
 const port = 3000;
@@ -64,6 +65,22 @@ const books: Book[] = [
     }
 ];
 
-app.get('/books', (req, res) => {
-    res.json(books);
+app.get("/books", (req, res) => {
+    if (req.query.group) {
+        const group = req.query.group as string;
+        const filteredBooks = books.filter((book) => book.group === group);
+        res.json(filteredBooks);
+    } else {
+        res.json(books);
+    }
+});
+
+app.get("/books/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const book = books.find((book) => book.id === id);
+    if (book) {
+        res.json(book);
+    } else {
+        res.status(404).send("Book not found");
+    }
 });
