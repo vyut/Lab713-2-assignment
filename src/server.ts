@@ -3,6 +3,8 @@ import express, { Request, Response } from 'express';
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!');
 });
@@ -10,15 +12,6 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
 });
-
-// app.get('/test', (req, res) => {
-//     let returnObj = {
-//         name: 'test',
-//         age: 20,
-//         address: 'Thai'
-//     }
-//     res.send(returnObj);
-// });
 
 app.get('/test', (req: Request, res: Response) => {
     const id = req.query.id;
@@ -125,8 +118,14 @@ app.get("/events/:id", (req, res) => {
     } else {
         res.status(404).send("Event not found");
     }
-})
+});
 
+app.post("/events", (req, res) => {
+    const newEvent: Event = req.body;
+    newEvent.id = events.length + 1;
+    events.push(newEvent);
+    res.json(newEvent);
+});
 interface Book {
     id: number;
     title: string;
