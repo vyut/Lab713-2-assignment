@@ -175,6 +175,18 @@ app.post("/events", (req, res) => {
     res.json(newEvent);
 });
 
+app.put("/events/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const updatedEvent: Event = req.body;
+    const index = events.findIndex((event) => event.id === id);
+    if (index !== -1) {
+        events[index] = updatedEvent;
+        res.json(updatedEvent);
+    } else {
+        res.status(404).send("Event not found");
+    }
+});
+
 app.get("/books", (req, res) => {
     if (req.query.group) {
         const group = req.query.group as string;
@@ -200,5 +212,16 @@ app.post("/books", (req, res) => {
     newBook.id = books.length + 1;
     books.push(newBook);
     res.json(newBook);
+});
+
+app.put("/books/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = books.findIndex((book) => book.id === id);
+    if (index !== -1) {
+        books[index] = { ...books[index], ...req.body };
+        res.json(books[index]);
+    } else {
+        res.status(404).send("Book not found");
+    }
 });
 
