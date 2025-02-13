@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 const app = express();
 const port = 3000;
 
+// Middleware to parse JSON request bodies
 app.use(express.json());
 
 app.get('/', (req: Request, res: Response) => {
@@ -11,12 +12,6 @@ app.get('/', (req: Request, res: Response) => {
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
-});
-
-app.get('/test', (req: Request, res: Response) => {
-    const id = req.query.id;
-    const output = `id: ${id}`;
-    res.send(output)
 });
 
 interface Event {
@@ -100,39 +95,13 @@ const events: Event[] = [
     },
 ]
 
-app.get("/events", (req, res) => {
-    if (req.query.category) {
-        const category = req.query.category as string;
-        const filteredEvents = events.filter((event) => event.category === category);
-        res.send(filteredEvents);
-    } else {
-        res.json(events);
-    }
-});
-
-app.get("/events/:id", (req, res) => {
-    const id = parseInt(req.params.id);
-    const event = events.find((event) => event.id === id);
-    if (event) {
-        res.json(event);
-    } else {
-        res.status(404).send("Event not found");
-    }
-});
-
-app.post("/events", (req, res) => {
-    const newEvent: Event = req.body;
-    newEvent.id = events.length + 1;
-    events.push(newEvent);
-    res.json(newEvent);
-});
 interface Book {
     id: number;
     title: string;
     author: string;
     description: string;
     group: string;
-};
+}
 
 const books: Book[] = [
     {
@@ -179,6 +148,33 @@ const books: Book[] = [
     }
 ];
 
+app.get("/events", (req, res) => {
+    if (req.query.category) {
+        const category = req.query.category as string;
+        const filteredEvents = events.filter((event) => event.category === category);
+        res.send(filteredEvents);
+    } else {
+        res.json(events);
+    }
+});
+
+app.get("/events/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const event = events.find((event) => event.id === id);
+    if (event) {
+        res.json(event);
+    } else {
+        res.status(404).send("Event not found");
+    }
+});
+
+app.post("/events", (req, res) => {
+    const newEvent: Event = req.body;
+    newEvent.id = events.length + 1;
+    events.push(newEvent);
+    res.json(newEvent);
+});
+
 app.get("/books", (req, res) => {
     if (req.query.group) {
         const group = req.query.group as string;
@@ -198,3 +194,11 @@ app.get("/books/:id", (req, res) => {
         res.status(404).send("Book not found");
     }
 });
+
+app.post("/books", (req, res) => {
+    const newBook: Book = req.body;
+    newBook.id = books.length + 1;
+    books.push(newBook);
+    res.json(newBook);
+});
+
